@@ -7,8 +7,8 @@ import java.util.Objects;
  * Employee class is used to store info about single employee
  */
 public class Employee {
-	private String surname;
-	private String name;
+	protected String surname;
+	protected String name;
 	
 	/**
 	 * Creates an employee with empty surname and name

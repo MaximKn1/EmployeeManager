@@ -9,6 +9,12 @@ public class App {
 		database.appendEmployee(new Employee("Tsydypov", "Agvan"));
 		
 		database.printAllEmployees();
+		Employee foundEmployee = database.findEmployee("Knyazkin");
+		
+		if (foundEmployee instanceof NullEmployee)
+			System.out.println("Employee not found");
+		else
+			System.out.println(foundEmployee.getSurname());
 	}
 
 }

@@ -46,4 +46,66 @@ public class EmployeeDatabase {
 	public List<Employee> getDataBase() {
 		return employeeList;
 	}
+	
+	/**
+	 * Returns the first employee with matching surname
+	 * @param surname Employee's surname
+	 * @return Employee with matching surname
+	 */
+	public Employee findEmployee(String surname) {
+		for (Employee employee : employeeList) {
+			if (employee.getSurname().equals(surname))
+				return employee;
+		}
+		
+		return new NullEmployee();
+	}
+	
+	/**
+	 * Returns the first employee with matching surname and name
+	 * @param surname Employee's surname
+	 * @param name Employee's name
+	 * @return Employee with matching surname and name
+	 */
+	public Employee findEmployee(String surname, String name) {
+		for (Employee employee : employeeList) {
+			if (employee.getSurname().equals(surname) && employee.getName().equals(name))
+				return employee;
+		}
+		
+		return new NullEmployee();
+	}
+	
+	/**
+	 * Returns a list of employees with matching surname
+	 * @param surname Employee's surname
+	 * @return A list of matching employees
+	 */
+	public List<Employee> findEmployees(String surname) {
+		List<Employee> foundEmployees = new ArrayList<>();
+		
+		for (Employee employee : employeeList) {
+			if (employee.getSurname().equals(surname))
+				foundEmployees.add(employee);
+		}
+		
+		return foundEmployees;
+	}
+	
+	/**
+	 * Returns a list of employees with matching surname and name
+	 * @param surname Employee's surname
+	 * @param name Employee's name
+	 * @return A list of matching employees
+	 */
+	public List<Employee> findEmployees(String surname, String name) {
+		List<Employee> foundEmployees = new ArrayList<>();
+		
+		for (Employee employee : employeeList) {
+			if (employee.getSurname().equals(surname) && employee.getName().equals(name))
+				foundEmployees.add(employee);
+		}
+		
+		return foundEmployees;
+	}
 }
