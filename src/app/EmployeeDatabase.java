@@ -2,78 +2,50 @@ package app;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Contains a list of employees
  */
 public class EmployeeDatabase {
-	List<Employee> employeeList;
+	Connection connection;
 	
 	/**
-	 * Initializes a database with an empty ArrayList
+	 * Initializes a database and connects to the SQL database
 	 */
-	public EmployeeDatabase() {
-		employeeList = new ArrayList<>();
+	public EmployeeDatabase() throws SQLException {
+		String url = "jdbc:postgresql://localhost/employees";
+		String user = "test";
+		String password = "HelloWorld";
+		connection = DriverManager.getConnection(url, user, password);
 	}
 	
-	/**
-	 * Creates a new database by copying an existing one
-	 * @param base Existing database
-	 */
-	public EmployeeDatabase(EmployeeDatabase base) {
-		employeeList = new ArrayList<>(base.getDataBase());
-	}
-	
-	/**
-	 * Creates a new database by copying an existing list of employees
-	 * @param empList
-	 */
-	public EmployeeDatabase(List<Employee> empList) {
-		employeeList = new ArrayList<>(empList);
-	}
-	
-	public void appendEmployee(Employee employee) {
-		employeeList.add(employee);
+	public void addEmployee(Employee employee) throws SQLException {
+		String query = "INSERT INTO employees (surname, name) VALUES ('%s', '%s')";
+		query = query.formatted(employee.getSurname(), employee.getName());
+		
+		Statement statement = connection.createStatement();
+		statement.execute(query);
 	}
 	
 	/**
 	 * Prints all employees' surname and name on separate lines
 	 */
-	public void printAllEmployees() {
-		employeeList.forEach(emp -> System.out.println(emp.getSurnameAndName()));
-	}
-	
-	public List<Employee> getDataBase() {
-		return employeeList;
-	}
-	
-	/**
-	 * Returns the first employee with matching surname
-	 * @param surname Employee's surname
-	 * @return Employee with matching surname
-	 */
-	public Employee findEmployee(String surname) {
-		for (Employee employee : employeeList) {
-			if (employee.getSurname().equals(surname))
-				return employee;
-		}
+	public void printAllEmployees() throws SQLException {
+		String query = "SELECT * FROM employees";
 		
-		return new NullEmployee();
-	}
-	
-	/**
-	 * Returns the first employee with matching surname and name
-	 * @param surname Employee's surname
-	 * @param name Employee's name
-	 * @return Employee with matching surname and name
-	 */
-	public Employee findEmployee(String surname, String name) {
-		for (Employee employee : employeeList) {
-			if (employee.getSurname().equals(surname) && employee.getName().equals(name))
-				return employee;
-		}
+		Statement statement = connection.createStatement();
+		statement.execute(query);
 		
-		return new NullEmployee();
+		ResultSet resultSet = statement.getResultSet();
+		while (resultSet.next()) {
+			System.out.print(resultSet.getString("surname") + ' ');
+			System.out.println(resultSet.getString("name"));
+		}
 	}
 	
 	/**
@@ -81,12 +53,18 @@ public class EmployeeDatabase {
 	 * @param surname Employee's surname
 	 * @return A list of matching employees
 	 */
-	public List<Employee> findEmployees(String surname) {
-		List<Employee> foundEmployees = new ArrayList<>();
+	public List<Employee> findEmployees(String surname) throws SQLException {		
+		String query = "SELECT * FROM employees WHERE surname = '%s'";
+		query = query.formatted(surname);
 		
-		for (Employee employee : employeeList) {
-			if (employee.getSurname().equals(surname))
-				foundEmployees.add(employee);
+		Statement statement = connection.createStatement();
+		statement.execute(query);
+		
+		List<Employee> foundEmployees = new ArrayList<>();
+		ResultSet resultSet = statement.getResultSet();
+		while (resultSet.next()) {
+			Employee employee = new Employee(resultSet.getString("surname"), resultSet.getString("name"));
+			foundEmployees.add(employee);
 		}
 		
 		return foundEmployees;
@@ -98,12 +76,18 @@ public class EmployeeDatabase {
 	 * @param name Employee's name
 	 * @return A list of matching employees
 	 */
-	public List<Employee> findEmployees(String surname, String name) {
-		List<Employee> foundEmployees = new ArrayList<>();
+	public List<Employee> findEmployees(String surname, String name) throws SQLException {
+		String query = "SELECT * FROM employees WHERE surname = '%s' AND name = '%s'";
+		query = query.formatted(surname, name);
 		
-		for (Employee employee : employeeList) {
-			if (employee.getSurname().equals(surname) && employee.getName().equals(name))
-				foundEmployees.add(employee);
+		Statement statement = connection.createStatement();
+		statement.execute(query);
+		
+		List<Employee> foundEmployees = new ArrayList<>();
+		ResultSet resultSet = statement.getResultSet();
+		while (resultSet.next()) {
+			Employee employee = new Employee(resultSet.getString("surname"), resultSet.getString("name"));
+			foundEmployees.add(employee);
 		}
 		
 		return foundEmployees;
