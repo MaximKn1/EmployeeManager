@@ -1,13 +1,17 @@
 package app;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class App {
 
 	public static void main(String[] args) throws SQLException {
-		EmployeeDatabase database = new EmployeeDatabase();
+		List<Command> availableCommands = new ArrayList<>();
+		availableCommands.add(new FindCommand());
+		availableCommands.add(new PrintTopCommand());
+		availableCommands.add(new HelpCommand(availableCommands));
 		
 		Scanner scanner = new Scanner(System.in);
 		String entry;
@@ -16,38 +20,25 @@ public class App {
 			System.out.println("Enter command");
 			entry = scanner.nextLine();
 			
-			if (entry.equals("find")) {
-				while (true) {
-					System.out.println("Enter employee's surname");
-					String surname = scanner.nextLine();
-					System.out.println("Enter employee's name");
-					String name = scanner.nextLine();
-					
-					if (name.isEmpty() && surname.isEmpty()) {
-						System.out.println("Please try again");
-					} else  {
-						List<Employee> foundEmployees;
-						if (surname.isEmpty()) {
-							foundEmployees = database.findEmployeesByName(name);
-						} else if (name.isEmpty()) {
-							foundEmployees = database.findEmployees(surname);
-						} else {
-							foundEmployees = database.findEmployees(surname, name);
-						}
-						
-						if (foundEmployees.isEmpty()) {
-							System.out.println("No employees found");
-						} else {
-							foundEmployees.forEach(emp -> System.out.println(emp.getSurnameAndName()));					
-						}
+			if (entry.equals("exit")) {
+				break;
+			} else if (entry.isBlank()) {
+				
+			} else {
+				Command command = null;
+				for (Command cmd : availableCommands) {
+					if (cmd.getName().equals(entry)) {
+						command = cmd;
 						break;
 					}
 				}
-			} else if (entry.equals("help")) {
-				System.out.println("find - look for employee by surname and/or name");
-				System.out.println("exit - close app");
-			} else if (entry.equals("exit")) {
-				break;
+				
+				if (command == null) {
+					System.out.println("No such command found");
+				} else {
+					command.execute(scanner);
+					scanner.nextLine();
+				}
 			}
 		}
 		scanner.close();

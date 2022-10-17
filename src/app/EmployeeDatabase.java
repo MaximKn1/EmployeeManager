@@ -9,13 +9,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Contains a list of employees
+ * Connects to the SQL employee database
  */
 public class EmployeeDatabase {
 	Connection connection;
 	
 	/**
-	 * Initializes a database and connects to the SQL database
+	 * Connects to the SQL employee database
 	 */
 	public EmployeeDatabase() throws SQLException {
 		String url = "jdbc:postgresql://localhost/employees";
@@ -45,6 +45,24 @@ public class EmployeeDatabase {
 		while (resultSet.next()) {
 			System.out.print(resultSet.getString("surname") + ' ');
 			System.out.println(resultSet.getString("name"));
+		}
+	}
+	
+	/**
+	 * Prints top N employees' surname and name on separate lines
+	 */
+	public void printTopEmployees(int N) throws SQLException {
+		String query = "SELECT * FROM employees";
+		
+		Statement statement = connection.createStatement();
+		statement.execute(query);
+		
+		ResultSet resultSet = statement.getResultSet();
+		int i = 0;
+		while (resultSet.next() && i < N) {
+			System.out.print(resultSet.getString("surname") + ' ');
+			System.out.println(resultSet.getString("name"));
+			i++;
 		}
 	}
 	
