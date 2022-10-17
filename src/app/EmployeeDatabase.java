@@ -92,4 +92,26 @@ public class EmployeeDatabase {
 		
 		return foundEmployees;
 	}
+	
+	/**
+	 * Returns a list of employees with matching name
+	 * @param name Employee's name
+	 * @return A list of matching employees
+	 */
+	public List<Employee> findEmployeesByName(String name) throws SQLException {
+		String query = "SELECT * FROM employees WHERE name = '%s'";
+		query = query.formatted(name);
+		
+		Statement statement = connection.createStatement();
+		statement.execute(query);
+		
+		List<Employee> foundEmployees = new ArrayList<>();
+		ResultSet resultSet = statement.getResultSet();
+		while (resultSet.next()) {
+			Employee employee = new Employee(resultSet.getString("surname"), resultSet.getString("name"));
+			foundEmployees.add(employee);
+		}
+		
+		return foundEmployees;
+	}
 }
